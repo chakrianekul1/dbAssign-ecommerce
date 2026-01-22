@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ecommerce_db_prev
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce_network
+
+  backend:
+    build: .
+    container_name: ecommerce_backend_prev
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=host=db user=user password=password dbname=ecommerce port=5432 sslmode=disable
+    depends_on:
+      - db
+    networks:
+      - ecommerce_network
+
+networks:
+  ecommerce_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
