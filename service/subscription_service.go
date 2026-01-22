@@ -18,7 +18,10 @@ func GetSubscriptionsByUserID(userID int) ([]domain.Subscription, error) {
 	var subs []domain.Subscription
 	for rows.Next() {
 		var s domain.Subscription
-		rows.Scan(&s.ID, &s.UserID, &s.ProductID, &s.StartDate, &s.EndDate, &s.Status)
+		err = rows.Scan(&s.ID, &s.UserID, &s.ProductID, &s.StartDate, &s.EndDate, &s.Status)
+		if err != nil {
+			return nil, err
+		}
 		subs = append(subs, s)
 	}
 	return subs, nil

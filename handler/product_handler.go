@@ -34,3 +34,21 @@ func GetOneProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, p)
 }
+
+func GetAllProducts(c *gin.Context) {
+    products, err := service.GetProducts()
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error" : "Cannot fetch products"})
+        return 
+    }
+    c.JSON(http.StatusOK, products)
+}
+
+func GetStoreProducts(c *gin.Context) {
+    store_id, _ := strconv.Atoi(c.Param("store_id"))
+    products, err := service.GetProductsByStoreId(store_id)
+    if  err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error" : "Products not found"})
+    }
+    c.JSON(http.StatusOK, products)
+}

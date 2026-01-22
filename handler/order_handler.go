@@ -32,3 +32,13 @@ func GetOneOrder(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, order)
 }
+
+func GetUserOrders(c *gin.Context) {
+	user_id, _ := strconv.Atoi(c.Param("user_id"))
+	orders, err := service.GetOrdersByUserId(user_id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error" : "User orders not found"})
+		return
+	}
+	c.JSON(http.StatusOK, orders)
+}

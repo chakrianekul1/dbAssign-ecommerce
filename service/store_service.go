@@ -23,3 +23,9 @@ func GetAllStores() ([]domain.Store, error) {
 	}
 	return stores, nil
 }
+
+func GetStoreById(id int) (domain.Store, error) {
+	var store domain.Store
+	err := db.DB.QueryRow("SELECT id, name, status FROM stores WHERE id = $1", id).Scan(&store.ID, &store.Name, &store.Status)
+	return store, err
+}

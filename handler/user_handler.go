@@ -30,3 +30,12 @@ func GetOneUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, user)
 }
+
+func GetAllUsers(c *gin.Context) {
+	users, err := service.GetUsers()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"Error" : "error getting users"})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}

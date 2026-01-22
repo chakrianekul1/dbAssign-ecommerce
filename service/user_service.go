@@ -16,3 +16,21 @@ func GetUserByID(id int) (domain.User, error) {
 	err := db.DB.QueryRow("SELECT id, name, email, phone, address FROM users WHERE id = $1", id).Scan(&u.ID, &u.Name, &u.Email, &u.Phone, &u.Address)
 	return u, err
 }
+
+func GetUsers() ([]domain.User, error) {
+	users := []domain.User{}
+	rows, err := db.DB.Query("SELECT id, name, email, phone, address FROM users")
+	if err != nil {
+		return users, err
+	}
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Phone, &user.Address)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	defer rows.Close()
+	return users, err
+}

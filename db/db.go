@@ -58,6 +58,7 @@ func InitDB() {
     CREATE TABLE IF NOT EXISTS payments (
         id SERIAL PRIMARY KEY,
         order_id INTEGER REFERENCES orders(id),
+        user_id INTEGER REFERENCES users(id),
         amount NUMERIC NOT NULL,
         status TEXT DEFAULT 'pending',
         payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP

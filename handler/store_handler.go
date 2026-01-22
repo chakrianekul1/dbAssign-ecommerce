@@ -4,6 +4,7 @@ import (
 	"ecommerce/domain"
 	"ecommerce/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,4 +32,14 @@ func ListStores(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, stores)
+}
+
+func GetOneStore(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	store, err := service.GetStoreById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, store)
 }

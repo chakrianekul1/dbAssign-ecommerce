@@ -11,17 +11,28 @@ func main() {
 	r := gin.Default()
 
 	r.POST("/users", handler.AddUser) 
+	r.GET("/users", handler.GetAllUsers)
 	r.GET("/users/:id", handler.GetOneUser) 
+
 	r.POST("/stores", handler.AddStore) 
+	r.GET("/stores/:store_id", handler.GetOneStore)
 	r.GET("/stores", handler.ListStores) 
+
 	r.POST("/stores/:store_id/products", handler.AddProduct)
 	r.GET("/products/:id", handler.GetOneProduct) 
+	r.GET("/products", handler.GetAllProducts)
+	r.GET("/products/:store_id", handler.GetStoreProducts)
+
 	r.POST("/orders", handler.PlaceOrder) 
 	r.GET("/orders/:id", handler.GetOneOrder) 
+	r.GET("/orders/:user_id", handler.GetUserOrders)
+
 	r.POST("/subscriptions", handler.AddSubscription) 
 	r.GET("/users/:id/subscriptions", handler.GetUserSubscriptions) 
 	
 	r.POST("/payments", handler.CreatePayment)
+	r.GET("/payments/:payment_id", handler.GetPayment)
+	r.GET("/payments/:user_id", handler.GetPayments)
 
 	r.Run(":8080")
 }
