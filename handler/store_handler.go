@@ -35,7 +35,7 @@ func ListStores(c *gin.Context) {
 }
 
 func GetOneStore(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("store_id"))
 	store, err := service.GetStoreById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})

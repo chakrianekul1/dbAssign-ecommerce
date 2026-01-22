@@ -33,6 +33,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/newrelic/go-agent/v3 v3.42.0 // indirect
+	github.com/newrelic/go-agent/v3/integrations/nrgin v1.4.2 // indirect
 	github.com/newrelic/go-agent/v3/integrations/nrpq v1.1.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
