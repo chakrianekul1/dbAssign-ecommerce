@@ -33,7 +33,7 @@ func GetPayment(c *gin.Context) {
 }
 
 func GetPayments(c *gin.Context) {
-	user_id, _ := strconv.Atoi(c.Param("user_id"))
+	user_id, _ := strconv.Atoi(c.Param("id"))
 	payments, err := service.GetUserPayments(user_id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})

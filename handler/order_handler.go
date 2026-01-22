@@ -34,7 +34,7 @@ func GetOneOrder(c *gin.Context) {
 }
 
 func GetUserOrders(c *gin.Context) {
-	user_id, _ := strconv.Atoi(c.Param("user_id"))
+	user_id, _ := strconv.Atoi(c.Param("id"))
 	orders, err := service.GetOrdersByUserId(user_id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error" : "User orders not found"})
