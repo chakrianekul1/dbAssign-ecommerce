@@ -1,28 +1,38 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	_ "github.com/lib/pq"
 )
 
-var DB *sql.DB
+var (
+	DB  *sql.DB
+	RDB *redis.Client
+	Ctx = context.Background()
+)
 
 func InitDB() {
-	Connstr := os.Getenv("DB_URL")
+	connStr := os.Getenv("DB_URL")
 	var err error
 	
 	for i := 0; i < 5; i++ {
-		DB, err = sql.Open("postgres", Connstr)
+		DB, err = sql.Open("postgres", connStr)
 		if err == nil && DB.Ping() == nil {
 			break
 		}
 		log.Printf("DB not ready, retrying... (%d/5)", i+1)
 		time.Sleep(2 * time.Second)
 	}
+
+	RDB = redis.NewClient(&redis.Options{
+		Addr: os.Getenv("REDIS_URL"),
+	})
 
 	TableSQL := `
     CREATE TABLE IF NOT EXISTS users (
@@ -80,10 +90,9 @@ func InitDB() {
         status TEXT DEFAULT 'active'
     );
     `
-
 	_, err = DB.Exec(TableSQL)
 	if err != nil {
 		log.Fatal("Failed to build tables: ", err)
 	}
-	log.Println("DB connected and tables are ready via nrpostgres")
+	log.Println("DB and Redis connected.")
 }

@@ -13,16 +13,25 @@ services:
     networks:
       - ecommerce_network
 
+  redis:
+    image: redis:alpine
+    container_name: ecommerce_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce_network
+
   backend:
     build: .
     container_name: ecommerce_backend_prev
     environment:
       - DB_URL=host=db user=user password=password dbname=ecommerce port=5432 sslmode=disable
-      - NEW_RELIC_LICENSE_KEY=fc6b25096834332af634018fab5a4df3FFFFNRAL
+      - REDIS_URL=redis:6379
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     networks:
       - ecommerce_network
 

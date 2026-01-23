@@ -3,24 +3,44 @@ package service
 import (
 	"ecommerce/db"
 	"ecommerce/domain"
+	"encoding/json"
+	"time"
 )
 
 func CreateStore(s domain.Store) (int, error) {
 	var id int
 	err := db.DB.QueryRow("INSERT INTO stores (name, status) VALUES ($1, $2) RETURNING id", s.Name, "active").Scan(&id)
+	if err == nil {
+		db.RDB.Del(db.Ctx, "stores:all")
+	}
 	return id, err
 }
 
 func GetAllStores() ([]domain.Store, error) {
-	rows, err := db.DB.Query("SELECT id, name, status FROM stores")
-	if err != nil { return nil, err }
-	defer rows.Close()
 	var stores []domain.Store
+	cacheKey := "stores:all"
+
+	val, err := db.RDB.Get(db.Ctx, cacheKey).Result()
+	if err == nil {
+		json.Unmarshal([]byte(val), &stores)
+		return stores, nil
+	}
+
+	rows, err := db.DB.Query("SELECT id, name, status FROM stores")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var s domain.Store
 		rows.Scan(&s.ID, &s.Name, &s.Status)
 		stores = append(stores, s)
 	}
+
+ 	data, _ := json.Marshal(stores)
+	db.RDB.Set(db.Ctx, cacheKey, data, 30 * time.Minute)
+
 	return stores, nil
 }
 
