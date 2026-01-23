@@ -5,16 +5,19 @@ import (
 	"ecommerce/domain"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 )
 
 func GetProductById(id int) (domain.Product, error) {
+	start := time.Now() // Start high-precision timer
 	var p domain.Product
 	cacheKey := fmt.Sprintf("product:%d", id)
 
 	val, err := db.RDB.Get(db.Ctx, cacheKey).Result()
 	if err == nil {
 		json.Unmarshal([]byte(val), &p)
+		log.Printf("[PERF] GetProductById (CACHE HIT) took: %v", time.Since(start))
 		return p, nil
 	}
 
@@ -26,8 +29,9 @@ func GetProductById(id int) (domain.Product, error) {
 	}
 
 	data, _ := json.Marshal(p)
-	db.RDB.Set(db.Ctx, cacheKey, data, 10 * time.Minute)
+	db.RDB.Set(db.Ctx, cacheKey, data, 10*time.Minute)
 
+	log.Printf("[PERF] GetProductById (CACHE MISS) took: %v", time.Since(start))
 	return p, nil
 }
 
@@ -60,12 +64,14 @@ func CreateProduct(p domain.Product) (int, error) {
 }
 
 func GetProducts() ([]domain.Product, error) {
+	start := time.Now() // Start high-precision timer
 	var products []domain.Product
 	cacheKey := "products:all"
 
 	val, err := db.RDB.Get(db.Ctx, cacheKey).Result()
 	if err == nil {
 		json.Unmarshal([]byte(val), &products)
+		log.Printf("[PERF] GetProducts (CACHE HIT) took: %v", time.Since(start))
 		return products, nil
 	}
 
@@ -83,5 +89,7 @@ func GetProducts() ([]domain.Product, error) {
 
 	data, _ := json.Marshal(products)
 	db.RDB.Set(db.Ctx, cacheKey, data, 10*time.Minute)
+	
+	log.Printf("[PERF] GetProducts (CACHE MISS) took: %v", time.Since(start))
 	return products, nil
 }

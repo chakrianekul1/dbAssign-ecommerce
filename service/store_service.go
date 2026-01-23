@@ -4,6 +4,7 @@ import (
 	"ecommerce/db"
 	"ecommerce/domain"
 	"encoding/json"
+	"log"
 	"time"
 )
 
@@ -17,12 +18,14 @@ func CreateStore(s domain.Store) (int, error) {
 }
 
 func GetAllStores() ([]domain.Store, error) {
+	start := time.Now()
 	var stores []domain.Store
 	cacheKey := "stores:all"
 
 	val, err := db.RDB.Get(db.Ctx, cacheKey).Result()
 	if err == nil {
 		json.Unmarshal([]byte(val), &stores)
+		log.Printf("[PERF] GetAllStores (CACHE HIT) took: %v", time.Since(start))
 		return stores, nil
 	}
 
@@ -38,9 +41,10 @@ func GetAllStores() ([]domain.Store, error) {
 		stores = append(stores, s)
 	}
 
- 	data, _ := json.Marshal(stores)
-	db.RDB.Set(db.Ctx, cacheKey, data, 30 * time.Minute)
+	data, _ := json.Marshal(stores)
+	db.RDB.Set(db.Ctx, cacheKey, data, 30*time.Minute)
 
+	log.Printf("[PERF] GetAllStores (CACHE MISS) took: %v", time.Since(start))
 	return stores, nil
 }
 
