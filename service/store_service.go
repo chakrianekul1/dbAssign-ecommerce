@@ -42,7 +42,7 @@ func GetAllStores() ([]domain.Store, error) {
 	}
 
 	data, _ := json.Marshal(stores)
-	db.RDB.Set(db.Ctx, cacheKey, data, 30*time.Minute)
+	db.RDB.Set(db.Ctx, cacheKey, data, 30 * time.Minute)
 
 	log.Printf("[PERF] GetAllStores (CACHE MISS) took: %v", time.Since(start))
 	return stores, nil

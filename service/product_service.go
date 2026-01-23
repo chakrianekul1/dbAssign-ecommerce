@@ -29,7 +29,7 @@ func GetProductById(id int) (domain.Product, error) {
 	}
 
 	data, _ := json.Marshal(p)
-	db.RDB.Set(db.Ctx, cacheKey, data, 10*time.Minute)
+	db.RDB.Set(db.Ctx, cacheKey, data, 10 * time.Minute)
 
 	log.Printf("[PERF] GetProductById (CACHE MISS) took: %v", time.Since(start))
 	return p, nil
@@ -88,7 +88,7 @@ func GetProducts() ([]domain.Product, error) {
 	}
 
 	data, _ := json.Marshal(products)
-	db.RDB.Set(db.Ctx, cacheKey, data, 10*time.Minute)
+	db.RDB.Set(db.Ctx, cacheKey, data, 10 * time.Minute)
 	
 	log.Printf("[PERF] GetProducts (CACHE MISS) took: %v", time.Since(start))
 	return products, nil
